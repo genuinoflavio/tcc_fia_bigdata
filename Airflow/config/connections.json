@@ -1,0 +1,32 @@
+{
+  "postgres_airflow": {
+    "conn_type": "postgres",
+    "description": "",
+    "login": "airflow",
+    "password": "airflow",
+    "host": "postgres",
+    "port": 5432,
+    "schema": "airflow",
+    "extra": ""
+  },
+  "spark_local": {
+    "conn_type": "spark",
+    "description": "",
+    "login": "",
+    "password": null,
+    "host": "local[1]",
+    "port": null,
+    "schema": "",
+    "extra": ""
+  },
+  "minio_s3": {
+    "conn_type": "s3",
+    "description": "Minio S3",
+    "login": null,
+    "password": null,
+    "host": null,
+    "port": null,
+    "schema": null,
+    "extra": "{\"aws_access_key_id\":\"tcc_user\",\"aws_secret_access_key\":\"Acnmne@a9h!\",\"host\":\"http://minio:9000\"}"
+  }
+}
