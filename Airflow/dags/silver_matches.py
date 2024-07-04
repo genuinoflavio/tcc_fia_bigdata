@@ -21,8 +21,8 @@ default_args = {
 with DAG(dag_id="silver_players_matches_ingestion"
          ,default_args=default_args
          ,description='DAG responsável por fazer a ingestão das partidadas dos players BRONZE.'
-         , schedule_interval=None
-      #    , schedule_interval=timedelta(days=1)
+      #    , schedule_interval=None
+         , schedule_interval=timedelta(days=1)
          ,) as dag:
     
 

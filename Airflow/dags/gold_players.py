@@ -21,8 +21,8 @@ default_args = {
 with DAG(dag_id="gold_players_ingestion"
          ,default_args=default_args
          ,description='DAG responsável por fazer a ingestão dos players GOLD.'
-         , schedule_interval=None
-      #    , schedule_interval=timedelta(days=1)
+      #    , schedule_interval=None
+         , schedule_interval=timedelta(days=1)
          ,) as dag:
     
     
