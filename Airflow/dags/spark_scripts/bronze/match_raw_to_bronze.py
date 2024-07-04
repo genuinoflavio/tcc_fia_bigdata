@@ -6,6 +6,8 @@ from delta.tables import *
 import os
 import sys
 import re
+import pyspark.sql.functions as F
+from pyspark.sql.window import Window
 
 def minio_session_spark():
     spark = (
@@ -60,12 +62,13 @@ minio_client = Minio(endpoint=minio_endpoint, access_key=minio_access_key, secre
 minio_bucket = 'raw'
 folder = 'matchs/'
 tier = sys.argv[1]
-
+print(f'TIER PASSADO NO ARGUMENTO: {tier}')
 objects = minio_client.list_objects(minio_bucket, prefix=folder)
 
 json_files = [f"s3a://{minio_bucket}/{obj.object_name}" for obj in objects]
-pattern = re.compile(f'{tier}')
+pattern = re.compile(f'{tier.lower()}')
 filtered_json = [path for path in json_files if pattern.search(path)]
+print(f'LISTA FILTRADA PARA O TIER: {filtered_json}')
 df = spark.read.json(filtered_json[0:])
 
 df_final = (
@@ -115,5 +118,5 @@ df_final = (
     .format("delta")
     .mode("overwrite") 
     .option("overwriteSchema", "True")
-    .save(f"s3a://bronze/" + f'tb_lol_bronze_matchs')
+    .save(f"s3a://bronze/" + f'tb_lol_{tier.lower()}_matchs')
 )
