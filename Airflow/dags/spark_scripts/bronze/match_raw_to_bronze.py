@@ -65,7 +65,7 @@ df = spark.read.json(filtered_json[0:])
 df_final = (
     df
     .withColumn('players_exploded', F.explode(F.col("info.participants")))
-    .selectExpr("metadata.matchId"
+    .selectExpr(" metadata.matchId"
                 ,"players_exploded.puuid"
                 ,"players_exploded.summonerId"
                 ,"players_exploded.championName"

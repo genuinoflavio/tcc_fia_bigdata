@@ -20,8 +20,8 @@ default_args = {
 with DAG(dag_id="bronze_players_ingestion"
          ,default_args=default_args
          ,description='DAG responsável por fazer a ingestão dos players BRONZE.'
-         , schedule_interval=None
-      #    , schedule_interval=timedelta(days=1)
+      #    , schedule_interval=None
+         , schedule_interval=timedelta(days=1)
          ,) as dag:
     
 
