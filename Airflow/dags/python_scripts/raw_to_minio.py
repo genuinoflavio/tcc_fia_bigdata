@@ -1,7 +1,3 @@
-# TODO: Tirar prints e incluir LOGS com tempo de inicio e fim de tarefas
-# TODO Refatorar funções para seguir principios do SOLID
-# TODO Renomeiar arquivos da pasta raw/broze/I (e.g I_1.json para 1.json)
-
 import requests
 import json
 import os
@@ -13,7 +9,7 @@ import io
 import sys
 
 #MINIO CONFIGS
-minio_endpoint = os.environ.get('MINIO_ENDPOINT') # Mudar para o IP quando rodar no Docker;
+minio_endpoint = os.environ.get('MINIO_ENDPOINT')
 minio_access_key = os.environ.get('MINIO_ROOT_USER')
 minio_secret_key = os.environ.get('MINIO_ROOT_PASSWORD')
 minio_bucket_name  = "raw"
@@ -101,7 +97,6 @@ def upload_json_to_minio(bucket_name, folder_path, filename, data):
     except S3Error as err:
         print(f"Error: {err}")
 
-##TODO: Aplicar principios do SOLID(S)
 def get_player_by_rank(tier:str, division:str):
     base_url = 'https://br1.api.riotgames.com'
     endpoint = f"/lol/league-exp/v4/entries/RANKED_SOLO_5x5/{tier}/{division}"
@@ -111,7 +106,6 @@ def get_player_by_rank(tier:str, division:str):
         "X-Riot-Token": f"{token}"
         }
     
-    #folder_path = f"src/raw/{tier.lower()}/{division}"
     folder_path = f"{tier.lower()}_{division}"
     if not check_folder_exists(minio_bucket_name,folder_path):
         create_folders(minio_bucket_name, folder_path)
@@ -119,10 +113,9 @@ def get_player_by_rank(tier:str, division:str):
     else:
         page = get_last_page(folder_path+'/')
 
-    # i = 1#controle para não estourar os limite da api
     
     print(f'[EXCUTION] Iniciando {tier}-{division}: Pagina {page}')
-    while True: # Loop para passar por todas as paginas
+    while True:
 
         resquest_url_param = f"{request_url}?page={page}"
         response = requests.get(resquest_url_param, headers=headers)
@@ -141,7 +134,6 @@ def get_player_by_rank(tier:str, division:str):
         
         else: #Retorno diferente de 200 indica ERRO ou fim de paginas, então paro o LOOP
             print("Error API Status-Code: ", response.status_code)
-            #print("Erro na requisição da API")
             break
             
         time.sleep(0.9)
@@ -152,11 +144,6 @@ RANKS = {
         ,"SILVER": ['I','II','III','IV']
         ,"GOLD" :['I','II','III','IV']
         ,"PLATINUM":['I','II','III','IV']
-        # ,"EMERALD":['I','II','III','IV']
-        # ,"DIAMOND":['I','II','III','IV']
-        # ,"MASTER":['I']
-        # ,"GRANDMASTER":['I']
-        # ,"CHALLENGER":['I']
 }
 
 tier = sys.argv[1]

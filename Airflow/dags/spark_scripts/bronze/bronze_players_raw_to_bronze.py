@@ -28,10 +28,6 @@ def minio_session_spark():
             .config("spark.hadoop.fs.s3a.path.style.access", "true")
             .config("spark.hadoop.fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem")
             .config("spark.hadoop.fs.s3a.connection.ssl.enabled", "false")
-            ## Jars
-            # .config("spark.jars", " /usr/local/airflow/jars//hadoop-common-3.3.2.jar,\
-            #                         /usr/local/airflow/jars//hadoop-aws-3.3.2.jar, \
-            #                         /usr/local/airflow/jars//aws-java-sdk-bundle-1.11.874.jar")
             .config('spark.hadoop.fs.s3a.aws.credentials.provider', 'org.apache.hadoop.fs.s3a.SimpleAWSCredentialsProvider')
             .getOrCreate()
     )
@@ -39,14 +35,6 @@ def minio_session_spark():
 
 
 spark = minio_session_spark()
-
-# spark
-print(f"Spark version = {spark.version}")
-
-# hadoop
-print(f"Hadoop version = {spark._jvm.org.apache.hadoop.util.VersionInfo.getVersion()}")
-
-
 
 #MINIO CONFIGS
 minio_endpoint = os.environ.get('MINIO_ENDPOINT')
@@ -57,7 +45,6 @@ minio_client = Minio(endpoint=minio_endpoint, access_key=minio_access_key, secre
 
 
 minio_bucket = 'raw'
-# minio_path_bronze_players = ['bronze_I/']
 minio_path_bronze_players = ['bronze_I/','bronze_II/','bronze_III/','bronze_IV/']
 
 #BRONZE PLAYERS

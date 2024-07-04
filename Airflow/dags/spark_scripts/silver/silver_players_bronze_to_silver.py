@@ -24,7 +24,6 @@ def minio_session_spark():
             .config("spark.sql.extensions", "io.delta.sql.DeltaSparkSessionExtension")
             .config("spark.sql.catalog.spark_catalog", "org.apache.spark.sql.delta.catalog.DeltaCatalog")
             ## MinIO
-            #.config("spark.hadoop.fs.s3a.endpoint", "http://172.20.0.2:9000")
              .config("spark.hadoop.fs.s3a.endpoint", "minio:9000")
 
             .config("spark.hadoop.fs.s3a.access.key", os.environ.get('MINIO_ACCESS_KEY_USER'))
@@ -33,22 +32,12 @@ def minio_session_spark():
             .config("spark.hadoop.fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem")
             .config("spark.hadoop.fs.s3a.connection.ssl.enabled", "false")
             ## Jars
-            .config("spark.jars", "/home/jovyan/work/jars/hadoop-common-3.3.2.jar,\
-                                    /home/jovyan/work/jars/hadoop-aws-3.3.2.jar, \
-                                    /home/jovyan/work/jars/aws-java-sdk-bundle-1.11.874.jar")
             .config('spark.hadoop.fs.s3a.aws.credentials.provider', 'org.apache.hadoop.fs.s3a.SimpleAWSCredentialsProvider')
             .getOrCreate()
     )
     return spark
 
 spark = minio_session_spark()
-
-# spark
-print(f"Spark version = {spark.version}")
-
-# hadoop
-print(f"Hadoop version = {spark._jvm.org.apache.hadoop.util.VersionInfo.getVersion()}")
-
 
 #MINIO CONFIGS
 minio_endpoint = os.environ.get('MINIO_ENDPOINT')
