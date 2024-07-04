@@ -7,8 +7,13 @@ Airflow/jars/*
 Airflow/logs/*
 Airflow/postgres/*
 jupyternotebook/work/jars/
-minio/*
-
+minio/bronze/
+minio/silver/
+minio/gold/
+minio/raw/
+minio/dataset/
+minio/bronze/
+minio/.minio.sys
 # Environments
 .env
 .venv
