@@ -1,0 +1,7 @@
+FROM jupyter/pyspark-notebook:spark-3.3.2
+
+# Copy the requirements.txt file to the container
+COPY ./config/requirements.txt /home/jovyan/requirements.txt
+
+# Install the libraries from requirements.txt
+RUN pip install -r /home/jovyan/requirements.txt

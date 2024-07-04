@@ -1,0 +1,101 @@
+# version: '3.7'
+
+networks:
+  net:
+    driver: bridge
+
+x-airflow-common:
+  &airflow-common
+  image: tcc-airflow
+  environment:
+      LOAD_EX: n
+      EXECUTOR: Local
+      FERNET_KEY: 46BKJoQYlPPOexq0OhDZnIlNepKFf87WFwLbfzqDDho=
+      JAVA_HOME: /usr
+      MINIO_ENDPOINT: ${MINIO_ENDPOINT}
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER} 
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+      MINIO_ACCESS_KEY_USER: ${MINIO_ACCESS_KEY_USER}
+      MINIO_ACCESS_KEY_SECRET: ${MINIO_ACCESS_KEY_SECRET}
+      API_TOKEN: ${API_TOKEN}
+
+  volumes:
+      - ./Airflow/dags:/usr/local/airflow/dags
+      - ./Airflow/jars:/usr/local/airflow/jars
+      - ./Airflow/logs:/usr/local/airflow/logs
+      - ./Airflow/plugins:/usr/local/airflow/plugins
+      - ./Airflow/config:/usr/local/airflow/config
+  networks:
+      - net
+
+#
+
+services:
+  postgres:
+      image: postgres:9.6
+      hostname: postgres
+      container_name: postgres
+      environment:
+          - POSTGRES_USER=airflow
+          - POSTGRES_PASSWORD=airflow
+          - POSTGRES_DB=airflow
+          - PGDATA=/var/lib/postgresql/data
+      healthcheck:
+          test: ["CMD", "pg_isready", "-U", "airflow"]
+      networks:
+          - net 
+      volumes:
+          - ./Airflow/postgres:/var/lib/postgresql/data
+
+#
+
+  airflow_webserver:
+          <<: *airflow-common
+          depends_on:
+              postgres:
+                  condition: service_healthy
+          hostname: airflow_webserver
+          container_name: airflow_webserver
+          command:
+              - webserver
+          ports:
+              - 8085:8080
+
+  airflow_scheduler:
+      <<: *airflow-common
+      depends_on:
+          - airflow_webserver
+      hostname: airflow_scheduler
+      container_name: airflow_scheduler
+      command:
+          - scheduler
+ # 
+
+  minio:
+      image: minio/minio:latest
+      hostname: minio
+      container_name: minio
+      command: server /data --console-address ":9001"
+      restart: always
+      environment:
+        - MINIO_ROOT_USER=${MINIO_ROOT_USER} 
+        - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
+      volumes:
+        - ./minio:/data
+      networks:
+        - net
+      ports:
+        - 9000:9000
+        - 9001:9001
+
+  jupyternotebook:
+      image: tcc-jupyternotebook:latest
+      hostname: JupyterNotebook
+      container_name: JupyterNotebook
+      restart: always
+      volumes:
+        - ./jupyternotebook/work:/home/jovyan/work
+      networks:
+        - net
+      ports:
+        - 8888:8888
